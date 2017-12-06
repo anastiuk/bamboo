@@ -8,8 +8,10 @@
 ###
 -->
 <project name="Application: Winsight Web Service" default="target.cleanbuild" basedir="..">
-  <description>Apache ANT build file for the Winsight Web Service</description>
+  <description>Apache ANT build file for the Winsight Web TREst</description>
   <!-- -->
+  
+  
   <!-- ===================================================================== -->
   <!-- Global Property Configuration -->
   <!-- ===================================================================== -->
