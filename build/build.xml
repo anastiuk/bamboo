@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+###
+ # (C) Copyright 2016 by Mobility Quotient Solutions, Inc.
+ #
+ # $Revision: $
+ #     $Date: $
+###
+-->
+<project name="Application: Winsight Web Service" default="target.cleanbuild" basedir="..">
+  <description>Apache ANT build file for the Winsight Web Service</description>
+  <!-- -->
+  <!-- ===================================================================== -->
+  <!-- Global Property Configuration -->
+  <!-- ===================================================================== -->
+  <!-- Customization -->
+  <property name="project-prefix" value="winsight"/>
+  <property name="package-prefix" value="winsight-webservice"/>
+  <!-- Directories: source & distribution -->
+  <property name="dir.dist.base" value="dist"/>
+  <property name="dir.dist.final" value="${dir.dist.base}/${project-prefix}"/>
+  <property name="dir.dist.module" value="${dir.dist.final}/modules/webservice/${mfImplVersion}"/>
+  <property name="dir.dist.properties" value="${dir.dist.final}/properties"/>
+  <property name="dir.dist.resources" value="${dir.dist.final}/resources"/>
+
+  <!-- ===================================================================== -->
+  <!-- Target: Initialization -->
+  <!-- ===================================================================== -->
+  
+  <target name="target.init">
+    <tstamp>
+      <format property="DF_TODAY" pattern="EEEE, dd MMMM yyyy 'at' h:mm:ssa z" locale="en"/>
+    </tstamp>
+    <echo message="Attempting to create build v${mfImplVersion} of '${ant.project.name}' on ${DF_TODAY}"/>
+    <!-- Step 1: Create the base distribution folder for the application -->
+    <mkdir dir="${dir.dist.module}/webservice/modules"/>
+    
+    <!-- Step 2: Populate the Web -->
+    <copy todir="${dir.dist.module}/webservice/web" verbose="false">
+      <fileset dir="web">
+        <exclude name="**/*.html"/>
+        <exclude name="**/*.jsp"/>
+        <exclude name="**/*.js"/>
+        <exclude name="**/*.info"/>
+        <exclude name="**/*.css"/>
+        <exclude name="**/*.twig"/>
+      </fileset>
+    </copy>
+    <!-- Step 2b: Perform a 2nd stage overwrite copy to modify the build numbers -->
+    <!-- CAUTION: DO NOT ATTEMPT TO MERGE THIS STEP WITH THE ABOVE OTHERWISE IMAGE CORRUPTION WILL OCCUR -->
+    <echo message="Copying HTML/JSP files with updated build numbers..."/>
+    <copy todir="${dir.dist.module}/webservice/web" verbose="false">
+      <fileset dir="web">
+        <include name="**/*.html"/>
+        <include name="**/*.jsp"/>
+        <include name="**/*.js"/>
+        <include name="**/*.info"/>
+        <include name="**/*.css"/>
+        <include name="**/*.twig"/>
+      </fileset>
+      <filterset>
+        <filter token="BUILDNUMBER" value="${mfImplVersion}" />
+        </filterset>
+    </copy>
+     
+    <!-- Step 2c: Rename the asset folder version 
+    <copy todir="${dir.dist.module}/webservice/web/assets/${mfImplVersion}">
+      <fileset dir="${dir.dist.module}/webservice/web/assets/@BUILDNUMBER@"/>
+    </copy>
+    <move todir="${dir.dist.module}/webservice/web/assets/${mfImplVersion}">
+      <fileset dir="${dir.dist.module}/webservice/web/assets/@BUILDNUMBER@"/>
+    </move>
+    -->
+       
+    <!-- Step 3: Populate the Modules -->
+    <copy todir="${dir.dist.module}/webservice/modules" verbose="false">
+      <fileset dir="modules">
+        <exclude name="**/*.html"/>
+        <exclude name="**/*.jsp"/>
+        <exclude name="**/*.js"/>
+        <exclude name="**/*.info"/>
+        <exclude name="**/*.css"/>
+        <exclude name="**/*.twig"/>
+        <exclude name="**/*.yml"/>
+      </fileset>
+    </copy>
+    <!-- Step 3b: Perform a 2nd stage overwrite copy to modify the build numbers -->
+    <!-- CAUTION: DO NOT ATTEMPT TO MERGE THIS STEP WITH THE ABOVE OTHERWISE IMAGE CORRUPTION WILL OCCUR -->
+    <echo message="Copying HTML/JSP files with updated build numbers..."/>
+    <copy todir="${dir.dist.module}/webservice/modules" verbose="false">
+      <fileset dir="modules">
+        <include name="**/*.html"/>
+        <include name="**/*.jsp"/>
+        <include name="**/*.js"/>
+        <include name="**/*.info"/>
+        <include name="**/*.css"/>
+        <include name="**/*.twig"/>
+        <include name="**/*.yml"/>
+      </fileset>
+      <filterset>
+        <filter token="BUILDNUMBER" value="${mfImplVersion}" />
+      </filterset>
+    </copy>
+
+    <!-- Step 5: The Feature files 
+    <mkdir dir="${dir.dist.module}/webservice/features"/>
+    <copy todir="${dir.dist.module}/webservice/features" verbose="false">
+      <fileset dir="migration\content_types">
+        <include name="*.tar.gz" />
+      </fileset>
+      <fileset dir="migration\paragraphs">
+        <include name="*.tar.gz" />
+      </fileset>
+      <fileset dir="migration\misc">
+        <include name="*.tar.gz" />
+      </fileset>
+    </copy>    
+    -->
+
+    <!-- Step 6: Theme Files -->
+    <copy todir="${dir.dist.module}/webservice/themes" verbose="false">
+      <fileset dir="themes">
+        <exclude name="**/*.html"/>
+        <exclude name="**/*.jsp"/>
+        <exclude name="**/*.js"/>
+        <exclude name="**/*.info"/>
+        <exclude name="**/*.css"/>
+        <exclude name="**/*.twig"/>
+        <exclude name="**/*.yml"/>
+      </fileset>
+    </copy>
+    <!-- Step 3b: Perform a 2nd stage overwrite copy to modify the build numbers -->
+    <!-- CAUTION: DO NOT ATTEMPT TO MERGE THIS STEP WITH THE ABOVE OTHERWISE IMAGE CORRUPTION WILL OCCUR -->
+    <echo message="Copying HTML/JSP files with updated build numbers..."/>
+    <copy todir="${dir.dist.module}/webservice/themes" verbose="false">
+      <fileset dir="themes">
+        <include name="**/*.html"/>
+        <include name="**/*.jsp"/>
+        <include name="**/*.js"/>
+        <include name="**/*.info"/>
+        <include name="**/*.css"/>
+        <include name="**/*.twig"/>
+        <include name="**/*.yml"/>
+      </fileset>
+      <filterset>
+        <filter token="BUILDNUMBER" value="${mfImplVersion}" />
+      </filterset>
+    </copy>    
+    <!-- Step 7: Create resources directory -->   
+    <!-- Step 8: Add the base configuration -->
+    <!-- Step 9: Add the configuration files-->
+  </target>    
+
+  <!-- ===================================================================== -->
+  <!-- Target: Distribution -->
+  <!-- ===================================================================== -->
+  
+  <!-- Perform tar.gz compression and distribtion -->
+  <target name="target.dist" depends="target.init" description="Generate the Distribution">
+    <tar destfile="${dir.dist.base}/${package-prefix}.tar.gz" compression="gzip" longfile="gnu">
+      <tarfileset dir="${dir.dist.final}" prefix="${project-prefix}" preserveLeadingSlashes="true"/>
+    </tar>
+  </target>
+
+  <!-- ===================================================================== -->
+  <!-- Target: Cleanup -->
+  <!-- ===================================================================== -->
+  
+  <target name="target.clean" description="Removal of previous build artifacts">
+    <echo message="Deleting: ${dir.dist.base}/**/* ..."/>
+    <delete includeemptydirs="true" verbose="false" failonerror="false">
+      <fileset dir="${dir.dist.base}" includes="**/*"/>
+    </delete>
+    <mkdir dir="${dir.dist.base}"/>    
+  </target>
+
+  <!-- ===================================================================== -->
+  <!-- Target: Cleanup -->
+  <!-- ===================================================================== -->
+  <target name="target.cleanbuild" depends="target.clean,target.dist" description="Cleans and Builds"/>
+</project>
